@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loopstack</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+        @import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            color: #fff;
+            cursor: none;
+        }
+
+        /* в”Ђв”Ђ Top gradient overlay в”Ђв”Ђ */
+        .top-gradient {
+            position: fixed;
+            top: -30vh;
+            left: 0;
+            width: 100vw;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* в”Ђв”Ђ Hero content в”Ђв”Ђ */
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 6vh;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 400;
+            line-height: 1.15;
+            letter-spacing: -0.015em;
+            text-align: center;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-btn {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #fff;
+            background: #000;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 9999px;
+            padding: 1.3rem 2.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.9rem;
+            cursor: none;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .hero-btn:hover {
+            background: #fff;
+            color: #000;
+            transform: translateY(-2px);
+        }
+
+        .btn-text {
+            position: relative;
+            top: -0.5px;
+        }
+
+        .blinking-dot {
+            width: 10px;
+            height: 10px;
+            background: #39FF14;
+            border-radius: 50%;
+            position: relative;
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+
+        .blinking-dot::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(57, 255, 20, 0.45);
+            transform: translate(-50%, -50%) scale(0.6);
+            animation: wave-expand 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                transform: scale(0.85);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes wave-expand {
+            0% {
+                transform: translate(-50%, -50%) scale(0.6);
+                opacity: 0.9;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2.3);
+                opacity: 0;
+            }
+        }
+
+        /* в”Ђв”Ђ Footer container в”Ђв”Ђ */
+        .footer-container {
+            position: fixed;
+            top: 50vh;
+            transform: translateY(-50%);
+            left: 20px;
+            right: 20px;
+            z-index: 3;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.2rem;
+        }
+
+        .footer-title {
+            font-family: 'General Sans', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: #fff;
+        }
+
+        .footer-container hr {
+            border: none;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.2rem;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+        }
+
+        .social-icons a {
+            color: rgba(255, 255, 255, 0.55);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+        }
+
+        .social-icons a:hover {
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: none;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.75;
+            transform: translateY(-1px);
+        }
+
+        .copyright {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        /* в”Ђв”Ђ Giant wordmark в”Ђв”Ђ */
+        .footer-logo-wrapper {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .footer-logo-text {
+            font-family: 'General Sans', sans-serif;
+            font-size: 21.9vw;
+            font-weight: 400;
+            letter-spacing: -0.03em;
+            line-height: 0.8;
+            opacity: 0.95;
+            transform: translateX(-20px);
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        /* в”Ђв”Ђ Video container в”Ђв”Ђ */
+        .video-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            height: 90vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 110%;
+            object-fit: cover;
+        }
+
+        /* в”Ђв”Ђ Custom cursor ring в”Ђв”Ђ */
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 99998;
+            pointer-events: none;
+            width: 48px;
+            height: 48px;
+            border: 1.5px solid rgba(255, 255, 255, 0.45);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            will-change: transform;
+            transition: border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .cursor-ring.expanded {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translate(-50%, -50%) scale(1.6);
+        }
+
+        /* в”Ђв”Ђ Glass cursor card в”Ђв”Ђ */
+        .glass-cursor-card {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 99999;
+            pointer-events: none;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 9999px;
+            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            will-change: transform, opacity;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-cursor-card.active {
+            opacity: 1;
+        }
+
+        .glass-cursor-text {
+            font-family: 'General Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            color: #39FF14;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(57, 255, 20, 0.45);
+            white-space: nowrap;
+        }
+
+        .glass-cursor-text .text-white {
+            color: #ffffff;
+        }
+
+        /* в”Ђв”Ђ Reveal animations в”Ђв”Ђ */
+        .word-wrapper {
+            overflow: hidden;
+            display: inline-block;
+            padding-bottom: 0.15em;
+            margin-bottom: -0.15em;
+        }
+
+        .word-inner {
+            display: inline-block;
+            transform: translateY(105%);
+            filter: blur(20px);
+            opacity: 0;
+        }
+
+        .word-inner.animate {
+            animation: word-reveal-mask 1.3s cubic-bezier(0.05, 0.9, 0.1, 1) forwards;
+        }
+
+        @keyframes word-reveal-mask {
+            0% {
+                transform: translateY(105%);
+                filter: blur(20px);
+                opacity: 0;
+            }
+            30% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0);
+                filter: blur(0);
+                opacity: 1;
+            }
+        }
+
+        .letter-wrapper {
+            overflow: hidden;
+            display: inline-block;
+            line-height: 0.8;
+        }
+
+        .letter-inner {
+            display: inline-block;
+            transform: translateX(-105%);
+            filter: blur(20px);
+            opacity: 0;
+        }
+
+        .letter-inner.animate {
+            animation: letter-reveal-mask 1.2s cubic-bezier(0.05, 0.9, 0.1, 1) forwards;
+        }
+
+        @keyframes letter-reveal-mask {
+            0% {
+                transform: translateX(-105%);
+                filter: blur(20px);
+                opacity: 0;
+            }
+            25% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(0);
+                filter: blur(0);
+                opacity: 0.95;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Top gradient -->
+    <img class="top-gradient" src="https://api.getlayers.ai/storage/v1/object/public/public/assets/loopstack-f8c64439bf/black_gradient.svg" alt="">
+
+    <!-- 2. Hero content -->
+    <main class="hero-content">
+        <h1 class="hero-title">Apply Now to be part <br> of the closed beta</h1>
+        <button class="hero-btn">
+            <span class="btn-text">Book a demo</span>
+            <span class="blinking-dot"></span>
+        </button>
+    </main>
+
+    <!-- 3. Footer -->
+    <footer class="footer-container">
+        <div class="footer-top">
+            <span class="footer-title">Stay in Touch</span>
+            <span class="footer-title">Think. Build. Repeat.</span>
+        </div>
+        <hr>
+        <div class="footer-bottom">
+            <div class="social-icons">
+                <!-- LinkedIn -->
+                <a href="#" aria-label="LinkedIn" style="cursor:none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                        <rect x="2" y="9" width="4" height="12"></rect>
+                        <circle cx="4" cy="4" r="2"></circle>
+                    </svg>
+                </a>
+                <!-- X -->
+                <a href="#" aria-label="X" style="cursor:none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4l11.733 16h4.267l-11.733 -16z"></path>
+                        <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path>
+                    </svg>
+                </a>
+                <!-- Instagram -->
+                <a href="#" aria-label="Instagram" style="cursor:none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                </a>
+            </div>
+            <nav class="nav-links">
+                <a href="#">About</a>
+                <a href="#">Features</a>
+                <a href="#">Pricing</a>
+                <a href="#">Contact</a>
+            </nav>
+            <span class="copyright">&copy; 2026 Loopstack</span>
+        </div>
+    </footer>
+
+    <!-- 4. Giant wordmark -->
+    <div class="footer-logo-wrapper">
+        <h2 class="footer-logo-text">Loopstack</h2>
+    </div>
+
+    <!-- 5. Video container -->
+    <div class="video-container">
+        <video autoplay muted playsinline loop>
+            <source src="https://api.getlayers.ai/storage/v1/object/public/public/assets/loopstack-f8c64439bf/flower.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- 6. Cursor ring -->
+    <div class="cursor-ring"></div>
+
+    <!-- 7. Glass cursor card -->
+    <div class="glass-cursor-card">
+        <span class="glass-cursor-text"><span class="text-white">Say </span>Hello!</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // в”Ђв”Ђ 1. Split wordmark into letter spans в”Ђв”Ђ
+            const logoText = document.querySelector('.footer-logo-text');
+            const logoString = logoText.textContent;
+            logoText.textContent = '';
+            Array.from(logoString).forEach(function (char, i) {
+                const wrapper = document.createElement('span');
+                wrapper.className = 'letter-wrapper';
+                const inner = document.createElement('span');
+                inner.className = 'letter-inner';
+                inner.textContent = char;
+                inner.style.animationDelay = (i * 0.09) + 's';
+                wrapper.appendChild(inner);
+                logoText.appendChild(wrapper);
+            });
+
+            // в”Ђв”Ђ 2. Split hero title into word spans (preserve <br>) в”Ђв”Ђ
+            const heroTitle = document.querySelector('.hero-title');
+            const rawHTML = heroTitle.innerHTML;
+            const parts = rawHTML.split(/(<br\s*\/?>)/i);
+            heroTitle.innerHTML = '';
+            let wordIndex = 0;
+
+            parts.forEach(function (part) {
+                if (/^<br\s*\/?>$/i.test(part)) {
+                    heroTitle.appendChild(document.createElement('br'));
+                } else {
+                    var words = part.trim().split(/\s+/);
+                    words.forEach(function (word, wi) {
+                        if (!word) return;
+                        var wrapper = document.createElement('span');
+                        wrapper.className = 'word-wrapper';
+                        var inner = document.createElement('span');
+                        inner.className = 'word-inner';
+                        inner.textContent = word;
+                        inner.style.animationDelay = (wordIndex * 0.1) + 's';
+                        wrapper.appendChild(inner);
+                        heroTitle.appendChild(wrapper);
+                        if (wi < words.length - 1) {
+                            heroTitle.appendChild(document.createTextNode(' '));
+                        }
+                        wordIndex++;
+                    });
+                    heroTitle.appendChild(document.createTextNode(' '));
+                }
+            });
+
+            // Trigger animations after a tick
+            requestAnimationFrame(function () {
+                var wordInners = document.querySelectorAll('.word-inner');
+                wordInners.forEach(function (el) { el.classList.add('animate'); });
+                var letterInners = document.querySelectorAll('.letter-inner');
+                letterInners.forEach(function (el) { el.classList.add('animate'); });
+            });
+
+            // в”Ђв”Ђ 3. Custom cursor physics в”Ђв”Ђ
+            var cursorRing = document.querySelector('.cursor-ring');
+            var glassCard = document.querySelector('.glass-cursor-card');
+            var heroBtn = document.querySelector('.hero-btn');
+            var navLinks = document.querySelectorAll('.nav-links a, .social-icons a');
+
+            var mouseX = -100, mouseY = -100;
+            var glassX = -100, glassY = -100;
+            var ringX = -100, ringY = -100;
+            var currentScale = 0, targetScale = 1;
+            var isVisible = false;
+
+            var GLASS_LERP = 0.08;
+            var SCALE_LERP = 0.15;
+
+            document.addEventListener('mousemove', function (e) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                if (!isVisible) {
+                    isVisible = true;
+                    glassX = mouseX;
+                    glassY = mouseY;
+                    glassCard.classList.add('active');
+                }
+            });
+
+            document.addEventListener('mouseleave', function () {
+                targetScale = 0;
+                isVisible = false;
+                glassCard.classList.remove('active');
+            });
+
+            document.addEventListener('mouseenter', function () {
+                targetScale = 1;
+                isVisible = true;
+                glassCard.classList.add('active');
+            });
+
+            // Button hover
+            heroBtn.addEventListener('mouseenter', function () {
+                targetScale = 0;
+                cursorRing.classList.add('expanded');
+            });
+            heroBtn.addEventListener('mouseleave', function () {
+                targetScale = 1;
+                cursorRing.classList.remove('expanded');
+            });
+
+            // Nav/social hover
+            navLinks.forEach(function (link) {
+                link.addEventListener('mouseenter', function () {
+                    cursorRing.classList.add('expanded');
+                });
+                link.addEventListener('mouseleave', function () {
+                    cursorRing.classList.remove('expanded');
+                });
+            });
+
+            // rAF loop
+            function animate() {
+                // Ring follows instantly
+                ringX = mouseX;
+                ringY = mouseY;
+
+                // Glass card lags with LERP
+                glassX += (mouseX - glassX) * GLASS_LERP;
+                glassY += (mouseY - glassY) * GLASS_LERP;
+
+                // Scale interpolation
+                currentScale += (targetScale - currentScale) * SCALE_LERP;
+
+                // Apply transforms
+                cursorRing.style.transform = 'translate3d(' + ringX + 'px, ' + ringY + 'px, 0) translate(-50%, -50%)' + (cursorRing.classList.contains('expanded') ? ' scale(1.6)' : '');
+                glassCard.style.transform = 'translate3d(' + glassX + 'px, ' + (glassY - 48) + 'px, 0) translate(-50%, -50%) scale(' + currentScale.toFixed(4) + ')';
+
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+        });
+    </script>
+</body>
+</html>
